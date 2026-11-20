@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Fancy Restaurant</title>
+    <link rel="stylesheet" th:href="@{/style.css}">
+</head>
+<body>
+
+<div class="menu-container">
+    <!-- Mengulang kartu menu sebanyak jumlah baris di tabel MySQL -->
+    <div class="menu-card" th:each="item : ${daftarMenu}">
+        <h3 th:text="${item.nama_menu}">Nama Makanan</h3>
+        <p th:text="'Rp ' + ${item.harga}">Rp 0</p>
+
+        <div class="qty-box">
+            <button type="button" class="btn-minus" th:disabled="${!item.tersedia}">−</button>
+            <span class="qty-count">0</span>
+            <button type="button" class="btn-plus" th:disabled="${!item.tersedia}">+</button>
+        </div>
+    </div>
+</div>
+
+<!-- Sambungkan JS dari folder static -->
+<script th:src="@{/customer.js}"></script>
+</body>
+</html>
