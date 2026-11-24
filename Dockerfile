@@ -1,4 +1,4 @@
-FROM maven:3.9.11-eclipse-temurin-27 AS build
+FROM maven:3.9.11-eclipse-temurin-21 AS build
 WORKDIR /app
 
 COPY pemesanan/pom.xml ./pom.xml
@@ -6,7 +6,7 @@ COPY pemesanan/src ./src
 
 RUN mvn -B -DskipTests package
 
-FROM eclipse-temurin:27-jre
+FROM eclipse-temurin:21-jre
 WORKDIR /app
 
 RUN addgroup --system spring && adduser --system --ingroup spring spring
