@@ -1,4 +1,4 @@
-# Sistem Pemesanan Restoran Digital — Plug N Play
+# Food Ordering System
 
 Aplikasi web pemesanan makanan dan minuman restoran berbasis *point-of-sale* (POS) ringan dengan tampilan responsif untuk pelanggan maupun staf dapur/kasir. Pelanggan dapat memesan langsung melalui katalog menu atau *scan* QR code per meja, memantau status pesanan secara *live*, serta mencetak struk digital, sementara staf mengelola antrean pesanan di papan Kanban, stok menu, sesi buka/tutup operasional, dan QR code meja.
 
@@ -21,5 +21,5 @@ Aplikasi web pemesanan makanan dan minuman restoran berbasis *point-of-sale* (PO
 
 1. **Clone repositori**
    ```bash
-   git clone <URL_REPOSITORI_KAMU>
-   cd <NAMA_FOLDER_REPOSITORI>
+   git clone https://github.com/Excryez/Food-Ordering-System
+   cd Food-Ordering-System
