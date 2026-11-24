@@ -2,26 +2,239 @@
 <html lang="id" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Fancy Restaurant</title>
-    <link rel="stylesheet" th:href="@{/style.css}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restoran Mahal — Pemesanan Digital</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
+<!-- CONTAINER TOAST NOTIFIKASI -->
+<div id="ui-toast-container" class="ui-toast-container"></div>
 
-<div class="menu-container">
-    <!-- Mengulang kartu menu sebanyak jumlah baris di tabel MySQL -->
-    <div class="menu-card" th:each="item : ${daftarMenu}">
-        <h3 th:text="${item.nama_menu}">Nama Makanan</h3>
-        <p th:text="'Rp ' + ${item.harga}">Rp 0</p>
-
-        <div class="qty-box">
-            <button type="button" class="btn-minus" th:disabled="${!item.tersedia}">−</button>
-            <span class="qty-count">0</span>
-            <button type="button" class="btn-plus" th:disabled="${!item.tersedia}">+</button>
+<!-- CUSTOM UI MODAL PERINGATAN / NOTIFIKASI -->
+<div id="ui-alert-modal" class="ui-modal-overlay">
+    <div class="ui-modal-box">
+        <div id="ui-alert-icon" class="ui-modal-icon warning">!</div>
+        <div id="ui-alert-title" class="ui-modal-title">Perhatian</div>
+        <div id="ui-alert-message" class="ui-modal-message">Pesan notifikasi</div>
+        <div class="ui-modal-actions">
+            <button type="button" id="ui-alert-ok" class="ui-btn-confirm">Mengerti</button>
         </div>
     </div>
 </div>
 
-<!-- Sambungkan JS dari folder static -->
-<script th:src="@{/customer.js}"></script>
+<header class="navbar">
+    <div class="container nav-content">
+        <div>
+            <h1>Selamat Makan dan Berbahagia</h1>
+            <p class="subtitle">Perut kenyang, hati senang</p>
+        </div>
+        <a th:href="@{/login}" class="btn-staff">Login Staf</a>
+    </div>
+</header>
+
+<main class="container main-content">
+    <!-- BANNER JIKA RESTORAN SEDANG TUTUP -->
+    <div th:if="${isBuka == false}"
+         style="background: #fee2e2; border: 1px solid #f87171; color: #991b1b; padding: 14px; border-radius: 8px; margin-bottom: 16px; text-align: center; font-weight: 600;">
+        Mohon maaf, pemesanan saat ini sedang TUTUP. Silakan tunggu hingga kasir membuka layanan kembali.
+    </div>
+
+    <!-- INFORMASI PEMESAN -->
+    <section class="card customer-card">
+        <h2>Informasi Pemesan</h2>
+
+        <!-- JIKA MASUK VIA SCAN QR MEJA -->
+        <div th:if="${mejaTerpilih != null}"
+             style="margin-bottom: 14px; padding: 12px 14px; background: #fff7ed; border: 1px solid #fdba74; border-radius: 8px; display: flex; align-items: center; justify-content: space-between;">
+            <span style="font-size: 0.95rem; color: #9a3412;">Lokasi Meja Anda:</span>
+            <strong style="font-size: 1.1rem; color: #ea580c;" th:text="'Meja ' + ${mejaTerpilih.nomor_meja}">Meja 1</strong>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group" th:hidden="${mejaTerpilih != null}">
+                <label for="select-meja">Nomor Meja <span class="required">*</span></label>
+                <select id="select-meja" required>
+                    <option value=""> Pilih Nomor Meja </option>
+                    <option th:each="m : ${daftarMeja}"
+                            th:value="${m.id_meja}"
+                            th:data-kode="${m.kode_qr}"
+                            th:selected="${mejaTerpilih != null and mejaTerpilih.id_meja == m.id_meja}"
+                            th:text="'Meja ' + ${m.nomor_meja}">
+                        Meja 1
+                    </option>
+                </select>
+            </div>
+
+            <div class="form-group" th:style="${mejaTerpilih != null ? 'grid-column: 1 / -1;' : ''}">
+                <label for="input-nama">Nama Pelanggan <span class="required">*</span></label>
+                <input type="text" id="input-nama" placeholder="Nama" required>
+            </div>
+        </div>
+    </section>
+
+    <!-- STATUS PESANAN MEJA (AUTO-UPDATE TIAP 5 DETIK SAMPAI SELESAI) -->
+    <section class="card tracking-section" id="tracking-section"
+             th:data-kode-qr="${mejaTerpilih != null ? mejaTerpilih.kode_qr : ''}">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2 style="margin: 0;">Status Pesanan Meja Ini</h2>
+        </div>
+        <div id="daftar-status-pesanan" style="margin-top: 10px;">
+            <p style="color: #6b7280; font-size: 14px;">Memuat status pesanan...</p>
+        </div>
+    </section>
+
+    <!-- DAFTAR MENU DENGAN FOTO, KATEGORI & DESKRIPSI -->
+    <section class="menu-section">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 10px;">
+            <h2 style="margin: 0;">Daftar Menu</h2>
+        </div>
+
+        <!-- FILTER KATEGORI MENU -->
+        <div class="category-tabs">
+            <button type="button" class="btn-filter-kat active" data-kategori="semua">Semua Menu</button>
+            <button type="button" class="btn-filter-kat" data-kategori="Makanan">Makanan</button>
+            <button type="button" class="btn-filter-kat" data-kategori="Camilan">Camilan</button>
+            <button type="button" class="btn-filter-kat" data-kategori="Minuman">Minuman</button>
+        </div>
+
+        <div class="menu-grid">
+            <div class="card menu-item"
+                 th:each="item : ${daftarMenu}"
+                 th:classappend="${item.tersedia != true or item.stok == null or item.stok <= 0} ? 'menu-habis' : ''"
+                 th:data-id="${item.id_menu}"
+                 th:data-nama="${item.nama_menu}"
+                 th:data-kategori="${item.kategori != null ? item.kategori : 'Lainnya'}"
+                 th:data-harga="${item.harga}"
+                 th:data-stok="${item.stok != null ? item.stok : 0}">
+
+                <!-- FOTO MENU + BADGE KATEGORI -->
+                <div class="menu-img-wrapper">
+                    <img class="menu-img"
+                         th:src="${item.gambar != null and !item.gambar.isEmpty() ? '/images/' + item.gambar : 'https://placehold.co/400x250/e5e7eb/6b7280?text=Menu'}"
+                         th:alt="${item.nama_menu}">
+                    <span class="badge-kategori"
+                          th:text="${item.kategori != null and !item.kategori.isEmpty() ? item.kategori : 'Menu'}">
+                            Makanan
+                        </span>
+                </div>
+
+                <!-- DETAIL MENU: JUDUL, STOK, DESKRIPSI & HARGA -->
+                <div class="menu-body">
+                    <div class="menu-info">
+                        <div class="menu-header">
+                            <h3 class="menu-title" th:text="${item.nama_menu}">Nama Menu</h3>
+                            <span class="badge-status tersedia"
+                                  th:if="${item.tersedia == true and item.stok != null and item.stok > 0}"
+                                  th:text="'Tersedia (' + ${item.stok} + ')'">Tersedia</span>
+                            <span class="badge-status habis"
+                                  th:if="${item.tersedia != true or item.stok == null or item.stok <= 0}">Habis</span>
+                        </div>
+
+                        <p class="menu-desc"
+                           th:text="${item.deskripsi != null and !item.deskripsi.isEmpty() ? item.deskripsi : 'Menu spesial khas Restoran Mahal.'}">
+                            Deskripsi menu
+                        </p>
+
+                        <p class="menu-price" th:text="'Rp ' + ${#numbers.formatInteger(item.harga, 1, 'POINT')}">
+                            Rp 15.000
+                        </p>
+                    </div>
+
+                    <div class="menu-actions">
+                        <div class="qty-control">
+                            <button type="button" class="btn-qty btn-minus"
+                                    th:disabled="${item.tersedia != true or item.stok == null or item.stok <= 0 or isBuka == false}">−</button>
+                            <span class="qty-val">0</span>
+                            <button type="button" class="btn-qty btn-plus"
+                                    th:disabled="${item.tersedia != true or item.stok == null or item.stok <= 0 or isBuka == false}">+</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- CHECKOUT BAR -->
+<footer class="checkout-bar">
+    <div class="container checkout-content">
+        <div class="checkout-summary">
+            <span>Total Pembayaran (<strong id="total-item">0</strong> item)</span>
+            <h3 id="total-harga">Rp 0</h3>
+        </div>
+        <button type="button" id="btn-pesan" class="btn-primary"
+                th:disabled="${isBuka == false}"
+                th:text="${isBuka == false ? 'Pemesanan Tutup' : 'Kirim Pesanan'}">
+            Kirim Pesanan
+        </button>
+    </div>
+</footer>
+
+<!-- MODAL 1: KONFIRMASI PESANAN, PEMBAYARAN & CATATAN -->
+<div id="modal-konfirmasi" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 999; align-items: center; justify-content: center; padding: 16px;">
+    <div style="background: #fff; border-radius: 12px; max-width: 480px; width: 100%; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto;">
+        <h2 style="margin-top: 0; border-bottom: 1px solid #e5e7eb; padding-bottom: 10px;">Konfirmasi Pesanan</h2>
+
+        <div id="konfirmasi-info-pemesan" style="font-size: 14px; margin-bottom: 12px; color: #374151;"></div>
+
+        <div style="background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; margin-bottom: 14px;">
+            <strong style="font-size: 14px;">Rincian Menu:</strong>
+            <ul id="konfirmasi-list-item" style="margin: 8px 0 0 18px; padding: 0; font-size: 14px;"></ul>
+        </div>
+
+        <div style="margin-bottom: 12px;">
+            <label for="select-pembayaran" style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 14px;">
+                Metode Pembayaran <span style="color: red;">*</span>
+            </label>
+            <select id="select-pembayaran" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #d1d5db;">
+                <option value="Tunai (Bayar di Kasir)">Tunai (Bayar di Kasir)</option>
+                <option value="QRIS">QRIS</option>
+                <option value="Transfer Bank">Transfer Bank</option>
+                <option value="E-Wallet (DANA / GoPay / OVO)">E-Wallet (DANA / GoPay / OVO)</option>
+            </select>
+        </div>
+
+        <div style="margin-bottom: 14px;">
+            <label for="input-catatan-umum" style="display: block; font-weight: 600; margin-bottom: 6px; font-size: 14px;">
+                Catatan Pesanan (Opsional)
+            </label>
+            <textarea id="input-catatan-umum" rows="2" placeholder="Contoh: Pedas sedang, es dipisah, atau permintaan khusus lainnya..." style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #d1d5db;"></textarea>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 16px; font-weight: bold; padding-top: 10px; border-top: 1px solid #e5e7eb; margin-bottom: 16px;">
+            <span>Total Bayar:</span>
+            <span id="konfirmasi-total-harga" style="color: #16a34a;">Rp 0</span>
+        </div>
+
+        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+            <button type="button" id="btn-batal-konfirmasi" style="padding: 8px 14px; border-radius: 6px; border: 1px solid #d1d5db; background: #fff; cursor: pointer;">Batal</button>
+            <button type="button" id="btn-submit-konfirmasi" style="padding: 8px 16px; border-radius: 6px; border: none; background: #16a34a; color: #fff; font-weight: 600; cursor: pointer;">Konfirmasi & Buat Struk</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL 2: STRUK DIGITAL -->
+<div id="modal-struk" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; align-items: center; justify-content: center; padding: 16px;">
+    <div style="background: #fff; border-radius: 10px; max-width: 400px; width: 100%; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.25); font-family: monospace;">
+        <div id="area-cetak-struk">
+            <div style="text-align: center; border-bottom: 1px dashed #9ca3af; padding-bottom: 10px; margin-bottom: 10px;">
+                <h3 style="margin: 0; font-size: 18px;">RESTORAN MAHAL</h3>
+                <p style="margin: 4px 0 0; font-size: 12px;">Struk Pemesanan Digital</p>
+            </div>
+            <div id="struk-meta" style="font-size: 12px; line-height: 1.6; border-bottom: 1px dashed #9ca3af; padding-bottom: 8px; margin-bottom: 8px;"></div>
+            <div id="struk-items" style="font-size: 12px; line-height: 1.6; border-bottom: 1px dashed #9ca3af; padding-bottom: 8px; margin-bottom: 8px;"></div>
+            <div id="struk-footer" style="font-size: 12px; line-height: 1.6;"></div>
+            <p style="text-align: center; font-size: 11px; margin-top: 14px; color: #4b5563;">Terima kasih! Pesanan Anda sedang diteruskan ke dapur.</p>
+        </div>
+
+        <div style="display: flex; gap: 8px; justify-content: center; margin-top: 16px; font-family: sans-serif;">
+            <button type="button" id="btn-cetak-struk" style="padding: 8px 14px; border-radius: 6px; border: 1px solid #2563eb; background: #eff6ff; color: #1d4ed8; font-weight: 600; cursor: pointer;">Cetak / Simpan PDF</button>
+            <button type="button" id="btn-tutup-struk" style="padding: 8px 16px; border-radius: 6px; border: none; background: #111827; color: #fff; font-weight: 600; cursor: pointer;">Selesai</button>
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/js/customer.js}"></script>
 </body>
 </html>

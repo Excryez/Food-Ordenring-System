@@ -2,8 +2,10 @@ package com.resto.pemesanan.model;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
+
 @Entity
-@Table(name = "pengguna")
+@Table(name = "pesanan")
 public class Pesanan {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,6 +18,24 @@ public class Pesanan {
     private Integer total_harga;
     private String waktu_pesan;
     private String waktu_update;
+    private String metode_pembayaran;
+    private String catatan_pesanan;
+
+    public String getMetode_pembayaran() {
+        return metode_pembayaran;
+    }
+
+    public void setMetode_pembayaran(String metode_pembayaran) {
+        this.metode_pembayaran = metode_pembayaran;
+    }
+
+    public String getCatatan_pesanan() {
+        return catatan_pesanan;
+    }
+
+    public void setCatatan_pesanan(String catatan_pesanan) {
+        this.catatan_pesanan = catatan_pesanan;
+    }
 
     public Integer getId_pesanan() {
         return id_pesanan;

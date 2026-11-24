@@ -15,7 +15,8 @@ public class Detail_pesanan {
     private int jumlah;
     private int harga;
     private int harga_satuan;
-    private int subtotal;
+    @Column(insertable = false, updatable = false)
+    private Integer subtotal;
     private String catatan;
 
     public int getId_detail() {

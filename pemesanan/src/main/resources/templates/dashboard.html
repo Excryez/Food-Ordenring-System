@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Staf — Restoran Mahal</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<!-- CONTAINER TOAST NOTIFIKASI -->
+<div id="ui-toast-container" class="ui-toast-container"></div>
+
+<!-- CUSTOM UI MODAL KONFIRMASI & PERINGATAN STAF -->
+<div id="ui-staff-modal" class="ui-modal-overlay">
+    <div class="ui-modal-box">
+        <div id="ui-staff-icon" class="ui-modal-icon warning">!</div>
+        <div id="ui-staff-title" class="ui-modal-title">Konfirmasi</div>
+        <div id="ui-staff-message" class="ui-modal-message">Pesan konfirmasi</div>
+        <div class="ui-modal-actions">
+            <button type="button" id="ui-staff-cancel" class="ui-btn-cancel">Batal</button>
+            <button type="button" id="ui-staff-confirm" class="ui-btn-confirm">Ya, Lanjutkan</button>
+        </div>
+    </div>
+</div>
+
+<header class="navbar">
+    <div class="container nav-content" style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <h1>Dashboard Operasional Staf</h1>
+            <p class="subtitle">
+                Halo, <strong th:text="${staf.nama}">Staf</strong> (<span th:text="${staf.role}">Kasir/Dapur</span>)
+            </p>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                <span th:text="${isBuka ? '● Status: Buka' : '● Status: Tutup'}"
+                      th:style="${isBuka ? 'color: #4ade80; font-weight: 600; font-size: 14px; margin-right: 4px;' : 'color: #f87171; font-weight: 600; font-size: 14px; margin-right: 4px;'}">
+                    ● Status: Buka
+                </span>
+
+            <button type="button" id="btn-toggle-sesi"
+                    th:data-buka="${isBuka}"
+                    onclick="prosesToggleOperasional()"
+                    th:text="${isBuka ? 'Tutup' : 'Buka'}"
+                    th:style="${isBuka ? 'background: #dc2626; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600;' : 'background: #16a34a; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600;'}">
+                Tutup
+            </button>
+
+            <a th:href="@{/}" class="btn-staff">
+                Halaman Pelanggan
+            </a>
+
+            <a th:href="@{/qr-meja}" class="btn-staff">
+                QR Meja
+            </a>
+
+            <a th:href="@{/logout}" class="btn-staff" style="background: #dc2626; border-color: #dc2626;">
+                Logout
+            </a>
+
+
+        </div>
+    </div>
+</header>
+
+<main class="container main-content">
+    <!-- PAPAN KANBAN PESANAN -->
+    <section class="kanban-section">
+        <h2>Antrean Pesanan Aktif</h2>
+        <div class="kanban-board">
+
+            <!-- KOLOM 1: PESANAN BARU -->
+            <div id="kolom-baru" class="kanban-column card" style="background: #fefce8; border: 1px solid #fde047;">
+                <h3 style="margin-bottom: 12px; color: #854d0e;">Pesanan Baru</h3>
+                <div th:each="p : ${daftarPesanan}" th:if="${p.status == 'baru'}"
+                     class="order-card pending-order"
+                     style="background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; margin-bottom: 12px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <strong>Order #<span th:text="${p.id_pesanan}">1</span> — Meja <span th:text="${mapNomorMeja[p.id_meja]}">1</span></strong>
+                        <span style="font-size: 12px; color: #6b7280;" th:text="${p.waktu_pesan}">12:00</span>
+                    </div>
+                    <p style="margin: 4px 0; font-size: 14px;">
+                        Pelanggan: <strong th:text="${p.nama_pelanggan}">Budi</strong>
+                    </p>
+                    <p style="margin: 4px 0; font-size: 13px; color: #1d4ed8;">
+                        Bayar: <strong th:text="${p.metode_pembayaran != null ? p.metode_pembayaran : 'Tunai'}">Tunai</strong>
+                    </p>
+                    <p th:if="${p.catatan_pesanan != null and !p.catatan_pesanan.isEmpty()}"
+                       style="margin: 6px 0; font-size: 13px; background: #fffbeb; padding: 6px; border-radius: 4px; color: #92400e;">
+                        <strong>Catatan:</strong> <span th:text="${p.catatan_pesanan}"></span>
+                    </p>
+
+                    <ul style="margin: 8px 0; padding-left: 18px; font-size: 14px;">
+                        <li th:each="d : ${mapDetailPesanan[p.id_pesanan]}">
+                            <span th:text="${mapNamaMenu[d.id_menu]}">Menu</span>
+                            <strong>x<span th:text="${d.jumlah}">1</span></strong>
+                        </li>
+                    </ul>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding-top: 8px; border-top: 1px solid #f3f4f6;">
+                        <strong>Rp <span th:text="${#numbers.formatInteger(p.total_harga, 1, 'POINT')}">0</span></strong>
+                        <button type="button"
+                                class="btn-status"
+                                th:data-id="${p.id_pesanan}"
+                                data-status="diproses"
+                                style="background: #2563eb; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                            Proses Pesanan
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KOLOM 2: SEDANG DIPROSES -->
+            <div id="kolom-diproses" class="kanban-column card" style="background: #eff6ff; border: 1px solid #93c5fd;">
+                <h3 style="margin-bottom: 12px; color: #1e40af;">Sedang Diproses</h3>
+                <div th:each="p : ${daftarPesanan}" th:if="${p.status == 'diproses'}"
+                     class="order-card pending-order"
+                     style="background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; margin-bottom: 12px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <strong>Order #<span th:text="${p.id_pesanan}">1</span> — Meja <span th:text="${mapNomorMeja[p.id_meja]}">1</span></strong>
+                        <span style="font-size: 12px; color: #6b7280;" th:text="${p.waktu_update}">12:05</span>
+                    </div>
+                    <p style="margin: 4px 0; font-size: 14px;">
+                        Pelanggan: <strong th:text="${p.nama_pelanggan}">Budi</strong>
+                    </p>
+                    <p style="margin: 4px 0; font-size: 13px; color: #1d4ed8;">
+                        Bayar: <strong th:text="${p.metode_pembayaran != null ? p.metode_pembayaran : 'Tunai'}">Tunai</strong>
+                    </p>
+                    <p th:if="${p.catatan_pesanan != null and !p.catatan_pesanan.isEmpty()}"
+                       style="margin: 6px 0; font-size: 13px; background: #fffbeb; padding: 6px; border-radius: 4px; color: #92400e;">
+                        <strong>Catatan:</strong> <span th:text="${p.catatan_pesanan}"></span>
+                    </p>
+
+                    <ul style="margin: 8px 0; padding-left: 18px; font-size: 14px;">
+                        <li th:each="d : ${mapDetailPesanan[p.id_pesanan]}">
+                            <span th:text="${mapNamaMenu[d.id_menu]}">Menu</span>
+                            <strong>x<span th:text="${d.jumlah}">1</span></strong>
+                        </li>
+                    </ul>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding-top: 8px; border-top: 1px solid #f3f4f6;">
+                        <strong>Rp <span th:text="${#numbers.formatInteger(p.total_harga, 1, 'POINT')}">0</span></strong>
+                        <button type="button"
+                                class="btn-status"
+                                th:data-id="${p.id_pesanan}"
+                                data-status="selesai"
+                                style="background: #16a34a; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                            Selesaikan Pesanan
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KOLOM 3: SELESAI -->
+            <div id="kolom-selesai" class="kanban-column card" style="background: #f0fdf4; border: 1px solid #86efac;">
+                <h3 style="margin-bottom: 12px; color: #166534;">Selesai / Siap Diantar</h3>
+                <div th:each="p : ${daftarPesanan}" th:if="${p.status == 'selesai'}"
+                     class="order-card"
+                     style="background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; margin-bottom: 12px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <strong>Order #<span th:text="${p.id_pesanan}">1</span> — Meja <span th:text="${mapNomorMeja[p.id_meja]}">1</span></strong>
+                        <span style="font-size: 12px; color: #16a34a; font-weight: 600;">Selesai</span>
+                    </div>
+                    <p style="margin: 4px 0; font-size: 14px;">
+                        Pelanggan: <strong th:text="${p.nama_pelanggan}">Budi</strong>
+                    </p>
+                    <p style="margin: 4px 0; font-size: 13px; color: #1d4ed8;">
+                        Bayar: <strong th:text="${p.metode_pembayaran != null ? p.metode_pembayaran : 'Tunai'}">Tunai</strong>
+                    </p>
+                    <p th:if="${p.catatan_pesanan != null and !p.catatan_pesanan.isEmpty()}"
+                       style="margin: 6px 0; font-size: 13px; background: #fffbeb; padding: 6px; border-radius: 4px; color: #92400e;">
+                        <strong>Catatan:</strong> <span th:text="${p.catatan_pesanan}"></span>
+                    </p>
+
+                    <ul style="margin: 8px 0; padding-left: 18px; font-size: 14px;">
+                        <li th:each="d : ${mapDetailPesanan[p.id_pesanan]}">
+                            <span th:text="${mapNamaMenu[d.id_menu]}">Menu</span>
+                            <strong>x<span th:text="${d.jumlah}">1</span></strong>
+                        </li>
+                    </ul>
+
+                    <div style="font-size: 12px; color: #6b7280; margin-top: 6px;">
+                        Total: <strong>Rp <span th:text="${#numbers.formatInteger(p.total_harga, 1, 'POINT')}">0</span></strong>
+                        • Selesai pada: <span th:text="${p.waktu_update}">12:15</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- KELOLA STOK MENU -->
+    <section class="stock-section card" style="margin-top: 24px;">
+        <h2>Kelola Stok & Ketersediaan Menu</h2>
+        <table class="stock-table">
+            <thead>
+            <tr style="border-bottom: 2px solid #e5e7eb; text-align: left;">
+                <th style="padding: 10px;">Nama Menu</th>
+                <th style="padding: 10px;">Harga</th>
+                <th style="padding: 10px;">Status</th>
+                <th style="padding: 10px;">Jumlah Stok</th>
+                <th style="padding: 10px;">Aksi</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="m : ${daftarMenu}" style="border-bottom: 1px solid #f3f4f6;">
+                <td style="padding: 10px;" th:text="${m.nama_menu}">Nama Menu</td>
+                <td style="padding: 10px;" th:text="'Rp ' + ${#numbers.formatInteger(m.harga, 1, 'POINT')}">Rp 15.000</td>
+                <td style="padding: 10px;">
+                            <span class="badge-status tersedia"
+                                  th:if="${m.tersedia and m.stok != null and m.stok > 0}">
+                                Tersedia
+                            </span>
+                    <span class="badge-status habis"
+                          th:if="${!m.tersedia or m.stok == null or m.stok <= 0}">
+                                Habis
+                            </span>
+                </td>
+                <td style="padding: 10px;">
+                    <input type="number"
+                           min="0"
+                           class="input-stok"
+                           th:id="'stok-' + ${m.id_menu}"
+                           th:value="${m.stok != null ? m.stok : 0}"
+                           style="width: 75px; padding: 6px; border: 1px solid #d1d5db; border-radius: 6px;">
+                </td>
+                <td style="padding: 10px;">
+                    <button type="button"
+                            class="btn-toggle btn-simpan-stok"
+                            th:data-id="${m.id_menu}"
+                            style="background: #111827; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                        Simpan Stok
+                    </button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+
+<script th:src="@{/js/kanban.js}"></script>
+<script>
+    function showStaffDialog({ title, message, type = "warning", showCancel = true, confirmText = "Ya, Lanjutkan", onConfirm = null }) {
+        const modal = document.getElementById("ui-staff-modal");
+        const icon = document.getElementById("ui-staff-icon");
+        const titleEl = document.getElementById("ui-staff-title");
+        const msgEl = document.getElementById("ui-staff-message");
+        const btnCancel = document.getElementById("ui-staff-cancel");
+        const btnConfirm = document.getElementById("ui-staff-confirm");
+
+        titleEl.textContent = title;
+        msgEl.textContent = message;
+        icon.className = "ui-modal-icon " + type;
+        icon.textContent = type === "danger" ? "!" : (type === "success" ? "✓" : "!");
+
+        btnCancel.style.display = showCancel ? "inline-block" : "none";
+        btnConfirm.className = "ui-btn-confirm " + (type === "danger" ? "danger" : (type === "success" ? "success" : ""));
+        btnConfirm.textContent = confirmText;
+
+        modal.style.display = "flex";
+
+        btnCancel.onclick = () => {
+            modal.style.display = "none";
+        };
+
+        btnConfirm.onclick = () => {
+            modal.style.display = "none";
+            if (typeof onConfirm === "function") onConfirm();
+        };
+    }
+
+    function prosesToggleOperasional() {
+        const btn = document.getElementById("btn-toggle-sesi");
+        const sedangBuka = btn.dataset.buka === "true";
+
+        if (sedangBuka) {
+            const jumlahPending = document.querySelectorAll(".pending-order").length;
+            if (jumlahPending > 0) {
+                showStaffDialog({
+                    title: "Tidak Dapat Menutup",
+                    message: "Masih ada " + jumlahPending + " pesanan yang belum selesai diproses dapur.\nSelesaikan seluruh antrean terlebih dahulu.",
+                    type: "danger",
+                    showCancel: false,
+                    confirmText: "Mengerti"
+                });
+                return;
+            }
+
+            showStaffDialog({
+                title: "Tutup Layanan Pemesanan?",
+                message: "Seluruh riwayat pesanan saat ini akan dihapus permanen dan pelanggan tidak dapat memesan sampai layanan dibuka kembali.",
+                type: "danger",
+                showCancel: true,
+                confirmText: "Ya, Tutup",
+                onConfirm: async () => {
+                    btn.disabled = true;
+                    btn.textContent = "Memproses...";
+                    try {
+                        const res = await fetch("/api/sesi/tutup", { method: "POST" });
+                        const data = await res.json().catch(() => ({}));
+                        if (res.ok) {
+                            showStaffDialog({
+                                title: "Berhasil Ditutup",
+                                message: data.message || "Layanan pemesanan telah ditutup.",
+                                type: "success",
+                                showCancel: false,
+                                confirmText: "OK",
+                                onConfirm: () => window.location.reload()
+                            });
+                        } else {
+                            showStaffDialog({
+                                title: "Gagal Menutup",
+                                message: data.message || "Terjadi kesalahan saat menutup.",
+                                type: "danger",
+                                showCancel: false,
+                                confirmText: "Tutup"
+                            });
+                            btn.disabled = false;
+                            btn.textContent = "Tutup";
+                        }
+                    } catch (err) {
+                        showStaffDialog({
+                            title: "Kesalahan Koneksi",
+                            message: err.message,
+                            type: "danger",
+                            showCancel: false,
+                            confirmText: "OK"
+                        });
+                        btn.disabled = false;
+                        btn.textContent = "Tutup";
+                    }
+                }
+            });
+        } else {
+            showStaffDialog({
+                title: "Buka Layanan Pemesanan?",
+                message: "Pelanggan akan dapat mulai melihat menu dan mengirimkan pesanan.",
+                type: "success",
+                showCancel: true,
+                confirmText: "Ya, Buka",
+                onConfirm: async () => {
+                    btn.disabled = true;
+                    btn.textContent = "Memproses...";
+                    try {
+                        const res = await fetch("/api/sesi/buka", { method: "POST" });
+                        const data = await res.json().catch(() => ({}));
+                        if (res.ok) {
+                            showStaffDialog({
+                                title: "Layanan Dibuka",
+                                message: data.message || "Layanan pemesanan sekarang aktif.",
+                                type: "success",
+                                showCancel: false,
+                                confirmText: "OK",
+                                onConfirm: () => window.location.reload()
+                            });
+                        } else {
+                            showStaffDialog({
+                                title: "Gagal Membuka",
+                                message: data.message || "Terjadi kesalahan saat membuka.",
+                                type: "danger",
+                                showCancel: false,
+                                confirmText: "OK"
+                            });
+                            btn.disabled = false;
+                            btn.textContent = "Buka";
+                        }
+                    } catch (err) {
+                        showStaffDialog({
+                            title: "Kesalahan Koneksi",
+                            message: err.message,
+                            type: "danger",
+                            showCancel: false,
+                            confirmText: "OK"
+                        });
+                        btn.disabled = false;
+                        btn.textContent = "Buka";
+                    }
+                }
+            });
+        }
+    }
+</script>
+</body>
+</html>

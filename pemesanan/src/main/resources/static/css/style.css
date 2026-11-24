@@ -1,0 +1,717 @@
+/* ==========================================================================
+   1. VARIABEL & RESET DASAR (MOBILE-FIRST)
+   ========================================================================== */
+:root {
+    --primary: #ea580c;         /* Oranye hangat restoran */
+    --primary-hover: #c2410c;
+    --primary-light: #fff7ed;
+    --dark: #111827;
+    --dark-secondary: #1f2937;
+    --bg-body: #f3f4f6;
+    --bg-card: #ffffff;
+    --text-main: #1f2937;
+    --text-muted: #6b7280;
+    --border-color: #e5e7eb;
+    --success: #16a34a;
+    --success-bg: #dcfce7;
+    --danger: #dc2626;
+    --danger-bg: #fee2e2;
+    --warning: #d97706;
+    --warning-bg: #fef3c7;
+    --info: #2563eb;
+    --info-bg: #dbeafe;
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    background-color: var(--bg-body);
+    color: var(--text-main);
+    line-height: 1.5;
+    padding-bottom: 95px; /* Ruang untuk sticky checkout bar di bawah */
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Container Responsif (HP Kecil -> Tablet -> Monitor Lebar) */
+.container {
+    width: 100%;
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 0 14px;
+}
+
+/* ==========================================================================
+   2. NAVBAR / HEADER
+   ========================================================================== */
+.navbar {
+    background: linear-gradient(135deg, var(--dark) 0%, var(--dark-secondary) 100%);
+    color: #ffffff;
+    padding: 16px 0;
+    box-shadow: var(--shadow-md);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.nav-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.navbar h1 {
+    font-size: clamp(1.15rem, 2.5vw, 1.5rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: #ffffff;
+}
+
+.navbar .subtitle {
+    font-size: 0.85rem;
+    color: #d1d5db;
+    margin-top: 2px;
+}
+
+.btn-staff {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 14px;
+    background-color: rgba(255, 255, 255, 0.12);
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.btn-staff:hover {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+/* ==========================================================================
+   3. KARTU & FORM INFORMASI PEMESAN
+   ========================================================================== */
+.main-content {
+    margin-top: 18px;
+}
+
+.card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    box-shadow: var(--shadow-sm);
+}
+
+h2 {
+    font-size: clamp(1.05rem, 2vw, 1.25rem);
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 12px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: var(--text-main);
+}
+
+.required {
+    color: var(--danger);
+}
+
+.form-group select,
+.form-group input[type="text"],
+.form-group input[type="password"] {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 0.95rem;
+    border: 1px solid #d1d5db;
+    border-radius: var(--radius-sm);
+    background-color: #ffffff;
+    color: var(--text-main);
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group select:focus,
+.form-group input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.15);
+}
+
+/* ==========================================================================
+   4. LIVE TRACKING STATUS PESANAN MEJA
+   ========================================================================== */
+.tracking-section {
+    margin-top: 16px;
+    border-left: 4px solid var(--success) !important;
+}
+
+/* ==========================================================================
+   5. GRID DAFTAR MENU (RESPONSIF DARI 1 KOLOM HP -> 4 KOLOM MONITOR BESAR)
+   ========================================================================== */
+.menu-section {
+    margin-top: 22px;
+}
+
+.menu-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+}
+
+.menu-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.menu-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.menu-item.menu-habis {
+    opacity: 0.65;
+    background-color: #f9fafb;
+}
+
+.menu-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.menu-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--dark);
+}
+
+.badge-status {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.badge-status.tersedia {
+    background-color: var(--success-bg);
+    color: var(--success);
+}
+
+.badge-status.habis {
+    background-color: var(--danger-bg);
+    color: var(--danger);
+}
+
+.menu-price {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 12px;
+}
+
+.menu-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: auto;
+}
+
+.input-catatan {
+    width: 100%;
+    padding: 8px 10px;
+    font-size: 0.85rem;
+    border: 1px solid #d1d5db;
+    border-radius: var(--radius-sm);
+    background-color: #f9fafb;
+}
+
+.input-catatan:focus {
+    outline: none;
+    background-color: #ffffff;
+    border-color: var(--primary);
+}
+
+.qty-control {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.btn-qty {
+    width: 34px;
+    height: 34px;
+    border: none;
+    border-radius: var(--radius-sm);
+    background-color: var(--primary-light);
+    color: var(--primary);
+    font-size: 1.2rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.15s, color 0.15s;
+}
+
+.btn-qty:hover:not(:disabled) {
+    background-color: var(--primary);
+    color: #ffffff;
+}
+
+.btn-qty:disabled {
+    background-color: #e5e7eb;
+    color: #9ca3af;
+    cursor: not-allowed;
+}
+
+.qty-val {
+    min-width: 24px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+/* ==========================================================================
+   6. STICKY CHECKOUT BAR (BAWAH LAYAR)
+   ========================================================================== */
+.checkout-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #ffffff;
+    border-top: 1px solid var(--border-color);
+    box-shadow: 0 -4px 14px rgba(0, 0, 0, 0.08);
+    padding: 12px 0;
+    z-index: 200;
+}
+
+.checkout-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.checkout-summary span {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    display: block;
+}
+
+.checkout-summary h3 {
+    font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+    font-weight: 800;
+    color: var(--dark);
+}
+
+.btn-primary {
+    padding: 12px 22px;
+    background-color: var(--primary);
+    color: #ffffff;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+    white-space: nowrap;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background-color: var(--primary-hover);
+}
+
+.btn-primary:disabled {
+    background-color: #9ca3af;
+    cursor: not-allowed;
+}
+
+/* ==========================================================================
+   7. DASHBOARD STAF (KANBAN BOARD & TABEL STOK RESPONSIF)
+   ========================================================================== */
+.kanban-board {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+}
+
+.stock-section {
+    overflow-x: auto; /* Agar tabel stok bisa di-scroll horizontal mulus di HP kecil */
+}
+
+.stock-table {
+    width: 100%;
+    min-width: 520px;
+    border-collapse: collapse;
+}
+
+/* ==========================================================================
+   8. BREAKPOINTS RESPONSIF (HP -> TABLET -> LAPTOP -> MONITOR BESAR)
+   ========================================================================== */
+
+/* HP Ukuran Sedang / Landscape (>= 540px) */
+@media (min-width: 540px) {
+    .container {
+        padding: 0 20px;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .menu-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+}
+
+/* Tablet & Laptop Kecil (>= 860px) */
+@media (min-width: 860px) {
+    .menu-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
+    }
+
+    .kanban-board {
+        grid-template-columns: repeat(3, 1fr) !important;
+        align-items: start;
+    }
+}
+
+/* Monitor Desktop Lebar (>= 1200px) */
+@media (min-width: 1200px) {
+    .menu-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+    }
+}
+
+/* Layar HP Sangat Kecil (<= 360px) */
+@media (max-width: 360px) {
+    .checkout-content {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+    }
+
+    .btn-primary {
+        width: 100%;
+    }
+
+    body {
+        padding-bottom: 125px;
+    }
+}
+
+/* ==========================================================================
+   11. FOTO MENU, DESKRIPSI, BADGE KATEGORI & FILTER TAB
+   ========================================================================== */
+.category-tabs {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    margin-bottom: 16px;
+}
+
+.btn-filter-kat {
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: 1px solid #d1d5db;
+    background: #ffffff;
+    color: var(--text-main);
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+
+.btn-filter-kat:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.btn-filter-kat.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #ffffff;
+}
+
+.menu-item {
+    padding: 0 !important;
+    overflow: hidden;
+}
+
+.menu-img-wrapper {
+    position: relative;
+    width: 100%;
+    height: 170px;
+    background-color: #e5e7eb;
+    overflow: hidden;
+}
+
+.menu-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+.menu-item:hover .menu-img {
+    transform: scale(1.05);
+}
+
+.badge-kategori {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(17, 24, 39, 0.82);
+    backdrop-filter: blur(4px);
+    color: #ffffff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 999px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+
+.menu-body {
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.menu-desc {
+    font-size: 0.84rem;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    line-height: 1.45;
+}
+
+/* ==========================================================================
+   9. MODE CETAK STRUK (PRINT / SAVE AS PDF)
+   ========================================================================== */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+
+    #modal-struk,
+    #area-cetak-struk,
+    #area-cetak-struk * {
+        visibility: visible;
+    }
+
+    #modal-struk {
+        position: absolute;
+        left: 0;
+        top: 0;
+        background: none !important;
+        padding: 0 !important;
+    }
+
+    #btn-cetak-struk,
+    #btn-tutup-struk {
+        display: none !important;
+    }
+}
+
+/* ==========================================================================
+   10. CUSTOM UI MODAL DIALOG & TOAST NOTIFICATION (PENGGANTI ALERT/CONFIRM)
+   ========================================================================== */
+.ui-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(17, 24, 39, 0.6);
+    backdrop-filter: blur(2px);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    animation: fadeIn 0.15s ease-out;
+}
+
+.ui-modal-box {
+    background: #ffffff;
+    border-radius: 14px;
+    max-width: 400px;
+    width: 100%;
+    padding: 22px;
+    box-shadow: 0 20px 30px rgba(0, 0, 0, 0.22);
+    text-align: center;
+    animation: popScale 0.18s ease-out;
+}
+
+.ui-modal-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    margin: 0 auto 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.ui-modal-icon.warning {
+    background: #fef3c7;
+    color: #d97706;
+}
+
+.ui-modal-icon.danger {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.ui-modal-icon.success {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.ui-modal-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 8px;
+}
+
+.ui-modal-message {
+    font-size: 0.92rem;
+    color: #4b5563;
+    line-height: 1.5;
+    margin-bottom: 20px;
+    white-space: pre-line;
+}
+
+.ui-modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.ui-btn-cancel {
+    flex: 1;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    background: #ffffff;
+    color: #374151;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.ui-btn-cancel:hover {
+    background: #f3f4f6;
+}
+
+.ui-btn-confirm {
+    flex: 1;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: none;
+    background: var(--primary);
+    color: #ffffff;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.ui-btn-confirm.danger {
+    background: #dc2626;
+}
+
+.ui-btn-confirm.success {
+    background: #16a34a;
+}
+
+/* Toast Notification di Pojok Kanan Atas */
+.ui-toast-container {
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 340px;
+    width: calc(100% - 36px);
+}
+
+.ui-toast {
+    background: #111827;
+    color: #ffffff;
+    padding: 12px 16px;
+    border-radius: 10px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-left: 4px solid var(--primary);
+    animation: slideInRight 0.2s ease-out;
+}
+
+.ui-toast.error {
+    border-left-color: #ef4444;
+}
+
+.ui-toast.success {
+    border-left-color: #22c55e;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes popScale {
+    from { transform: scale(0.92); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes slideInRight {
+    from { transform: translateX(30px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}

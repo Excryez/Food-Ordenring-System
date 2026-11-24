@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="id" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Tiap Meja — Restoran Mahal</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        .qr-top-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .qr-top-info h2 {
+            margin: 0 0 4px 0;
+            font-size: 1.1rem;
+            color: #111827;
+        }
+        .qr-top-info p {
+            margin: 0;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        .qr-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 18px;
+        }
+        .qr-card {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 20px 18px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        .qr-brand {
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #ea580c;
+        }
+        .qr-card h3 {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #111827;
+        }
+        .qr-hint {
+            margin: 0;
+            font-size: 0.78rem;
+            color: #6b7280;
+        }
+        .qr-box {
+            padding: 12px;
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin: 2px 0;
+        }
+        .qr-url {
+            font-size: 0.72rem;
+            color: #4b5563;
+            word-break: break-all;
+            background: #f9fafb;
+            border: 1px solid #f3f4f6;
+            padding: 6px 8px;
+            border-radius: 6px;
+            width: 100%;
+        }
+        .qr-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+            margin-top: 4px;
+        }
+        .btn-download-qr {
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid #d1d5db;
+            background: #ffffff;
+            color: #111827;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .btn-download-qr:hover {
+            background: #f3f4f6;
+        }
+
+        @page {
+            size: A4 portrait;
+            margin: 12mm;
+        }
+
+        @media print {
+            .navbar,
+            .qr-top-bar,
+            .qr-actions,
+            .no-print {
+                display: none !important;
+            }
+            html,
+            body {
+                margin: 0 !important;
+                padding: 0 !important;
+                background: #ffffff !important;
+                width: 100% !important;
+            }
+            .container,
+            .main-content {
+                max-width: 100% !important;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            .qr-grid {
+                display: grid !important;
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 12px !important;
+                width: 100% !important;
+            }
+            .qr-card {
+                break-inside: avoid !important;
+                page-break-inside: avoid !important;
+                box-shadow: none !important;
+                border: 1.5px solid #374151 !important;
+                border-radius: 10px !important;
+                padding: 14px 12px !important;
+                gap: 6px !important;
+            }
+            .qr-box {
+                padding: 8px !important;
+                border-color: #d1d5db !important;
+            }
+            .qr-url {
+                background: #ffffff !important;
+                border: none !important;
+                padding: 2px 4px !important;
+                color: #374151 !important;
+                font-size: 0.68rem !important;
+            }
+        }
+    </style>
+</head>
+<body>
+<header class="navbar">
+    <div class="container nav-content">
+        <div>
+            <h1>QR Code Meja</h1>
+        </div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <a th:href="@{/dashboard}" class="btn-staff">Kembali ke Dashboard</a>
+            <a th:href="@{/}" class="btn-staff">Halaman Pelanggan</a>
+        </div>
+    </div>
+</header>
+
+<main class="container main-content">
+    <div class="qr-top-bar">
+        <div class="qr-top-info">
+            <h2>Daftar QR Code Meja</h2>
+        </div>
+        <button type="button" id="btn-cetak-qr" class="btn-staff" style="background: #111827; padding: 10px 18px;">
+            Cetak QR
+        </button>
+    </div>
+
+    <div class="qr-grid" id="qr-grid">
+        <div class="qr-card"
+             th:each="m : ${daftarMeja}"
+             th:data-nomor="${m.nomor_meja}"
+             th:data-kode="${m.kode_qr}">
+            <h3 th:text="'Meja ' + ${m.nomor_meja}">Meja 1</h3>
+            <p class="qr-hint">Scan untuk pesan</p>
+            <div class="qr-box" th:id="'qrcode-' + ${m.id_meja}"></div>
+            <div class="qr-url" th:id="'qr-url-' + ${m.id_meja}"></div>
+            <div class="qr-actions no-print">
+                <a class="btn-staff"
+                   th:id="'qr-link-' + ${m.id_meja}"
+                   th:href="@{'/meja/' + ${m.kode_qr}}"
+                   target="_blank"
+                   style="background: #ea580c; border-color: #ea580c; width: 100%;">
+                    Buka Halaman Meja
+                </a>
+                <button type="button" class="btn-download-qr">Download PNG</button>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const btnCetak = document.getElementById("btn-cetak-qr");
+        const cards = document.querySelectorAll(".qr-card");
+
+        const baseUrl = window.location.origin.replace(/\/+$/, "");
+
+        cards.forEach(card => {
+            const kodeQr = card.dataset.kode || "";
+            const qrBox = card.querySelector(".qr-box");
+            const qrUrlEl = card.querySelector(".qr-url");
+            const qrLinkEl = card.querySelector(".qr-actions a");
+
+            const targetUrl = `${baseUrl}/meja/${encodeURIComponent(kodeQr)}`;
+            qrBox.innerHTML = "";
+            qrUrlEl.textContent = targetUrl;
+            if (qrLinkEl) {
+                qrLinkEl.href = targetUrl;
+            }
+
+            if (kodeQr && typeof QRCode !== "undefined") {
+                new QRCode(qrBox, {
+                    text: targetUrl,
+                    width: 156,
+                    height: 156,
+                    correctLevel: QRCode.CorrectLevel.M
+                });
+            } else {
+                qrBox.innerHTML = `<span style="color:#dc2626;font-size:12px;">Kode QR kosong</span>`;
+            }
+
+            const btnDownload = card.querySelector(".btn-download-qr");
+            if (btnDownload) {
+                btnDownload.addEventListener("click", () => {
+                    const nomorMeja = card.dataset.nomor || "Meja";
+                    const img = card.querySelector(".qr-box img");
+                    const canvas = card.querySelector(".qr-box canvas");
+                    let dataUrl = "";
+
+                    if (img && img.src) {
+                        dataUrl = img.src;
+                    } else if (canvas) {
+                        dataUrl = canvas.toDataURL("image/png");
+                    }
+
+                    if (!dataUrl) return;
+                    const link = document.createElement("a");
+                    link.download = `QR-Meja-${nomorMeja}.png`;
+                    link.href = dataUrl;
+                    link.click();
+                });
+            }
+        });
+
+        btnCetak.addEventListener("click", () => window.print());
+    });
+</script>
+</body>
+</html>
