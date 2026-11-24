@@ -1,5 +1,5 @@
 -- =====================================================================
---  FOOD RESERVATION SYSTEM - Kelompok 6 (PBO)
+--  FOOD RESERVATION SYSTEM - Kelompok 6 (PBO)\
 --  Database : MySQL 8.x (Laragon)   |   Charset : utf8mb4
 --  Cara pakai: import file ini SEKALI -> database + tabel + data dummy jadi.
 --  PERHATIAN: file ini menghapus lalu membuat ulang database
@@ -190,3 +190,19 @@ INSERT INTO detail_pesanan (id_pesanan, id_menu, jumlah, catatan) VALUES
  (1, 6, 2, NULL),
  (2, 2, 1, 'Pedas'),
  (2, 5, 1, NULL);
+
+ UPDATE menu SET gambar = 'Tinutuan.jpg' WHERE id_menu = 1;
+UPDATE menu SET gambar = 'ayam_rica.jpg' WHERE id_menu = 2;
+UPDATE menu SET gambar = 'cakalang_fufu.jpg' WHERE id_menu = 3;
+UPDATE menu SET gambar = 'Resep_Nasi_Kuning_Asli_Manado.jpg' WHERE id_menu = 4;
+UPDATE menu SET gambar = 'pisang_goroho.jpg' WHERE id_menu = 5;
+UPDATE menu SET gambar = 'es_kacang_merah.png' WHERE id_menu = 6;
+UPDATE menu SET gambar = 'es_teh_manis.jpg' WHERE id_menu = 7;
+
+SELECT id_pesanan, id_meja, nama_pelanggan, status, waktu_pesan
+FROM pesanan
+WHERE status IN ('baru', 'diproses');
+
+UPDATE pesanan
+SET status = 'selesai', waktu_update = NOW()
+WHERE status IN ('baru', 'diproses');
