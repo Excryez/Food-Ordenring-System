@@ -510,37 +510,92 @@ h2 {
     line-height: 1.45;
 }
 
-/* ==========================================================================
-   9. MODE CETAK STRUK (PRINT / SAVE AS PDF)
-   ========================================================================== */
+/* CETAK STRUK (PRINT / SAVE AS PDF) */
 @media print {
-    body * {
-        visibility: hidden;
+    @page {
+        margin: 8mm;
     }
 
-    #modal-struk,
-    #area-cetak-struk,
-    #area-cetak-struk * {
-        visibility: visible;
-    }
-
-    #modal-struk {
-        position: absolute;
-        left: 0;
-        top: 0;
-        background: none !important;
+    html,
+    body {
+        height: auto !important;
+        min-height: 0 !important;
+        margin: 0 !important;
         padding: 0 !important;
+        background: #ffffff !important;
+        overflow: visible !important;
+        width: 100% !important;
     }
 
+    /* Sembunyikan seluruh elemen halaman selain modal struk */
+    body > *:not(#modal-struk) {
+        display: none !important;
+    }
+
+    /* Kontainer modal mengikuti lebar penuh area cetak kertas */
+    #modal-struk {
+        position: static !important;
+        inset: auto !important;
+        display: block !important;
+        background: transparent !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100% !important;
+        height: auto !important;
+        overflow: visible !important;
+    }
+
+    /* Responsif mengikuti lebar kertas apa pun (58mm, 80mm, A5, A4, Letter) */
+    #modal-struk > div {
+        box-shadow: none !important;
+        border: 1px solid #d1d5db !important;
+        border-radius: 6px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+        margin: 0 !important;
+        padding: 14px !important;
+        box-sizing: border-box !important;
+        page-break-inside: auto !important;
+        break-inside: auto !important;
+    }
+
+    /* Penyesuaian skala otomatis jika dicetak di kertas besar (A4 / Letter / A5) */
+    @media (min-width: 140mm) {
+        #modal-struk > div {
+            padding: 24px 28px !important;
+            font-size: 14px !important;
+        }
+        #modal-struk h2,
+        #modal-struk h3 {
+            font-size: 20px !important;
+        }
+        #struk-meta,
+        #struk-items,
+        #struk-footer {
+            font-size: 14px !important;
+            line-height: 1.6 !important;
+        }
+    }
+
+    /* Cegah satu baris item menu terpotong setengah di batas pergantian halaman */
+    #struk-items > div,
+    #struk-footer {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+    }
+
+    /* Sembunyikan tombol aksi di bawah struk */
     #btn-cetak-struk,
-    #btn-tutup-struk {
+    #btn-tutup-struk,
+    #modal-struk > div > div:last-child {
         display: none !important;
     }
 }
 
-/* ==========================================================================
-   10. CUSTOM UI MODAL DIALOG & TOAST NOTIFICATION (PENGGANTI ALERT/CONFIRM)
-   ========================================================================== */
+/* CUSTOM UI MODAL DIALOG & TOAST NOTIFICATION */
 .ui-modal-overlay {
     display: none;
     position: fixed;

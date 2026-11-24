@@ -5,9 +5,61 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QR Code Tiap Meja — Restoran Mahal</title>
     <link rel="icon" href="data:,">
-    <link rel="stylesheet" th:href="@{/css/style.css}">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        body {
+            background: #f3f4f6;
+            color: #111827;
+            padding-bottom: 40px;
+        }
+        .container {
+            max-width: 1140px;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+        .navbar {
+            background: #111827;
+            color: #ffffff;
+            padding: 16px 0;
+            margin-bottom: 24px;
+        }
+        .nav-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+        .navbar h1 {
+            font-size: 1.35rem;
+            margin-bottom: 4px;
+        }
+        .subtitle {
+            font-size: 0.85rem;
+            color: #9ca3af;
+        }
+        .btn-staff {
+            display: inline-block;
+            padding: 8px 14px;
+            background: #374151;
+            color: #ffffff;
+            text-decoration: none;
+            border: 1px solid #4b5563;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+        }
+        .btn-staff:hover {
+            background: #4b5563;
+        }
         .qr-top-bar {
             display: flex;
             flex-wrap: wrap;
@@ -15,14 +67,16 @@
             align-items: center;
             justify-content: space-between;
             margin-bottom: 20px;
+            background: #ffffff;
+            padding: 16px 20px;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
         }
         .qr-top-info h2 {
-            margin: 0 0 4px 0;
             font-size: 1.1rem;
-            color: #111827;
+            margin-bottom: 4px;
         }
         .qr-top-info p {
-            margin: 0;
             font-size: 0.875rem;
             color: #6b7280;
         }
@@ -51,13 +105,11 @@
             color: #ea580c;
         }
         .qr-card h3 {
-            margin: 0;
             font-size: 1.25rem;
             font-weight: 800;
             color: #111827;
         }
         .qr-hint {
-            margin: 0;
             font-size: 0.78rem;
             color: #6b7280;
         }
@@ -69,7 +121,6 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            margin: 2px 0;
         }
         .qr-url {
             font-size: 0.72rem;
@@ -97,7 +148,6 @@
             font-size: 0.85rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s ease;
         }
         .btn-download-qr:hover {
             background: #f3f4f6;
@@ -109,50 +159,39 @@
         }
 
         @media print {
+            body {
+                background: #ffffff !important;
+                padding: 0 !important;
+            }
             .navbar,
             .qr-top-bar,
             .qr-actions,
             .no-print {
                 display: none !important;
             }
-            html,
-            body {
-                margin: 0 !important;
-                padding: 0 !important;
-                background: #ffffff !important;
-                width: 100% !important;
-            }
-            .container,
-            .main-content {
+            .container {
                 max-width: 100% !important;
-                width: 100% !important;
-                margin: 0 !important;
                 padding: 0 !important;
             }
             .qr-grid {
-                display: grid !important;
                 grid-template-columns: repeat(3, 1fr) !important;
                 gap: 12px !important;
-                width: 100% !important;
             }
             .qr-card {
-                break-inside: avoid !important;
-                page-break-inside: avoid !important;
                 box-shadow: none !important;
                 border: 1.5px solid #374151 !important;
                 border-radius: 10px !important;
                 padding: 14px 12px !important;
                 gap: 6px !important;
+                break-inside: avoid !important;
+                page-break-inside: avoid !important;
             }
             .qr-box {
                 padding: 8px !important;
-                border-color: #d1d5db !important;
             }
             .qr-url {
                 background: #ffffff !important;
                 border: none !important;
-                padding: 2px 4px !important;
-                color: #374151 !important;
                 font-size: 0.68rem !important;
             }
         }
@@ -163,6 +202,7 @@
     <div class="container nav-content">
         <div>
             <h1>QR Code Meja</h1>
+            <p class="subtitle">Scan QR untuk membuka halaman pemesanan sesuai nomor meja</p>
         </div>
         <div style="display: flex; gap: 8px; flex-wrap: wrap;">
             <a th:href="@{/dashboard}" class="btn-staff">Kembali ke Dashboard</a>
@@ -171,10 +211,11 @@
     </div>
 </header>
 
-<main class="container main-content">
+<main class="container">
     <div class="qr-top-bar">
         <div class="qr-top-info">
             <h2>Daftar QR Code Meja</h2>
+            <p>Cetak atau unduh QR untuk ditempelkan pada masing-masing meja</p>
         </div>
         <button type="button" id="btn-cetak-qr" class="btn-staff" style="background: #111827; padding: 10px 18px;">
             Cetak QR
@@ -186,6 +227,7 @@
              th:each="m : ${daftarMeja}"
              th:data-nomor="${m.nomor_meja}"
              th:data-kode="${m.kode_qr}">
+            <span class="qr-brand">Restoran Mahal</span>
             <h3 th:text="'Meja ' + ${m.nomor_meja}">Meja 1</h3>
             <p class="qr-hint">Scan untuk pesan</p>
             <div class="qr-box" th:id="'qrcode-' + ${m.id_meja}"></div>
