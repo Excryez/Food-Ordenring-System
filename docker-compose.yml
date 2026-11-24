@@ -8,8 +8,6 @@ services:
       MYSQL_USER: ${MYSQL_USER:-foodapp}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-foodapp_password}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root_password}
-    ports:
-      - "${MYSQL_PORT:-3306}:3306"
     volumes:
       - mysql_data:/var/lib/mysql
       - ./DBMiniProjectPBO.sql:/docker-entrypoint-initdb.d/01-food-reservation.sql:ro
