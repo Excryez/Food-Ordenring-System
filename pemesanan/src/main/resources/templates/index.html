@@ -8,10 +8,10 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-<!-- CONTAINER TOAST NOTIFIKASI -->
+<!-- Container Toast Notification -->
 <div id="ui-toast-container" class="ui-toast-container"></div>
 
-<!-- CUSTOM UI MODAL PERINGATAN / NOTIFIKASI -->
+<!-- Kustom UI Notifikasi -->
 <div id="ui-alert-modal" class="ui-modal-overlay">
     <div class="ui-modal-box">
         <div id="ui-alert-icon" class="ui-modal-icon warning">!</div>
@@ -34,17 +34,17 @@
 </header>
 
 <main class="container main-content">
-    <!-- BANNER JIKA RESTORAN SEDANG TUTUP -->
+    <!-- Banner saat restoran sedang tutup -->
     <div th:if="${isBuka == false}"
          style="background: #fee2e2; border: 1px solid #f87171; color: #991b1b; padding: 14px; border-radius: 8px; margin-bottom: 16px; text-align: center; font-weight: 600;">
         Mohon maaf, pemesanan saat ini sedang TUTUP. Silakan tunggu hingga kasir membuka layanan kembali.
     </div>
 
-    <!-- INFORMASI PEMESAN -->
+    <!-- Informasi Pemesanan -->
     <section class="card customer-card">
         <h2>Informasi Pemesan</h2>
 
-        <!-- JIKA MASUK VIA SCAN QR MEJA -->
+        <!-- Saat masuk dari scan QR -->
         <div th:if="${mejaTerpilih != null}"
              style="margin-bottom: 14px; padding: 12px 14px; background: #fff7ed; border: 1px solid #fdba74; border-radius: 8px; display: flex; align-items: center; justify-content: space-between;">
             <span style="font-size: 0.95rem; color: #9a3412;">Lokasi Meja Anda:</span>
@@ -73,7 +73,7 @@
         </div>
     </section>
 
-    <!-- STATUS PESANAN MEJA (AUTO-UPDATE TIAP 5 DETIK SAMPAI SELESAI) -->
+    <!-- Status Pesanan Meja -->
     <section class="card tracking-section" id="tracking-section"
              th:data-kode-qr="${mejaTerpilih != null ? mejaTerpilih.kode_qr : ''}">
         <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -84,7 +84,7 @@
         </div>
     </section>
 
-    <!-- DAFTAR MENU DENGAN FOTO, KATEGORI & DESKRIPSI -->
+    <!-- Daftar menu dengan kategori, foto, dan deskripsi -->
     <section class="menu-section">
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 10px;">
             <h2 style="margin: 0;">Daftar Menu</h2>
@@ -108,7 +108,7 @@
                  th:data-harga="${item.harga}"
                  th:data-stok="${item.stok != null ? item.stok : 0}">
 
-                <!-- FOTO MENU + BADGE KATEGORI -->
+                <!-- Foto menu dan base deskripsi -->
                 <div class="menu-img-wrapper">
                     <img class="menu-img"
                          th:src="${item.gambar != null and !item.gambar.isEmpty() ? '/images/' + item.gambar : 'https://placehold.co/400x250/e5e7eb/6b7280?text=Menu'}"
@@ -119,7 +119,7 @@
                         </span>
                 </div>
 
-                <!-- DETAIL MENU: JUDUL, STOK, DESKRIPSI & HARGA -->
+                <!-- Detail Menu -->
                 <div class="menu-body">
                     <div class="menu-info">
                         <div class="menu-header">
@@ -156,7 +156,7 @@
     </section>
 </main>
 
-<!-- CHECKOUT BAR -->
+<!-- Checkout Bar -->
 <footer class="checkout-bar">
     <div class="container checkout-content">
         <div class="checkout-summary">
@@ -171,7 +171,7 @@
     </div>
 </footer>
 
-<!-- MODAL 1: KONFIRMASI PESANAN, PEMBAYARAN & CATATAN -->
+<!-- Konfirmasi pesanan, pembayaran, dan catatan-->
 <div id="modal-konfirmasi" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 999; align-items: center; justify-content: center; padding: 16px;">
     <div style="background: #fff; border-radius: 12px; max-width: 480px; width: 100%; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto;">
         <h2 style="margin-top: 0; border-bottom: 1px solid #e5e7eb; padding-bottom: 10px;">Konfirmasi Pesanan</h2>
@@ -214,7 +214,7 @@
     </div>
 </div>
 
-<!-- MODAL 2: STRUK DIGITAL -->
+<!-- Struk Digital -->
 <div id="modal-struk" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 1000; align-items: center; justify-content: center; padding: 16px;">
     <div style="background: #fff; border-radius: 10px; max-width: 400px; width: 100%; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.25); font-family: monospace;">
         <div id="area-cetak-struk">

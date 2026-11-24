@@ -1,8 +1,6 @@
-/* ==========================================================================
-   1. VARIABEL & RESET DASAR (MOBILE-FIRST)
-   ========================================================================== */
+/* Variabel & Reset Dasar  */
 :root {
-    --primary: #ea580c;         /* Oranye hangat restoran */
+    --primary: #ea580c;
     --primary-hover: #c2410c;
     --primary-light: #fff7ed;
     --dark: #111827;
@@ -42,7 +40,7 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
-/* Container Responsif (HP Kecil -> Tablet -> Monitor Lebar) */
+/* Container Responsif */
 .container {
     width: 100%;
     max-width: 1320px;
@@ -50,9 +48,7 @@ body {
     padding: 0 14px;
 }
 
-/* ==========================================================================
-   2. NAVBAR / HEADER
-   ========================================================================== */
+/* Navbar/Header */
 .navbar {
     background: linear-gradient(135deg, var(--dark) 0%, var(--dark-secondary) 100%);
     color: #ffffff;
@@ -105,9 +101,7 @@ body {
     border-color: var(--primary);
 }
 
-/* ==========================================================================
-   3. KARTU & FORM INFORMASI PEMESAN
-   ========================================================================== */
+/* Kartu & Form Informasi Pesanan */
 .main-content {
     margin-top: 18px;
 }
@@ -165,17 +159,13 @@ h2 {
     box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.15);
 }
 
-/* ==========================================================================
-   4. LIVE TRACKING STATUS PESANAN MEJA
-   ========================================================================== */
+/* Live Tracking Status Pesanan Meja */
 .tracking-section {
     margin-top: 16px;
     border-left: 4px solid var(--success) !important;
 }
 
-/* ==========================================================================
-   5. GRID DAFTAR MENU (RESPONSIF DARI 1 KOLOM HP -> 4 KOLOM MONITOR BESAR)
-   ========================================================================== */
+/* Grid Daftar Menu */
 .menu-section {
     margin-top: 22px;
 }
@@ -306,9 +296,7 @@ h2 {
     font-size: 1rem;
 }
 
-/* ==========================================================================
-   6. STICKY CHECKOUT BAR (BAWAH LAYAR)
-   ========================================================================== */
+/* Checkout Bar */
 .checkout-bar {
     position: fixed;
     bottom: 0;
@@ -362,9 +350,7 @@ h2 {
     cursor: not-allowed;
 }
 
-/* ==========================================================================
-   7. DASHBOARD STAF (KANBAN BOARD & TABEL STOK RESPONSIF)
-   ========================================================================== */
+/* Dashboard Staf (Kanban Board & Tabel Stok) */
 .kanban-board {
     display: grid !important;
     grid-template-columns: 1fr !important;
@@ -381,9 +367,7 @@ h2 {
     border-collapse: collapse;
 }
 
-/* ==========================================================================
-   8. BREAKPOINTS RESPONSIF (HP -> TABLET -> LAPTOP -> MONITOR BESAR)
-   ========================================================================== */
+/* Breakpoint responsive */
 
 /* HP Ukuran Sedang / Landscape (>= 540px) */
 @media (min-width: 540px) {
@@ -439,9 +423,7 @@ h2 {
     }
 }
 
-/* ==========================================================================
-   11. FOTO MENU, DESKRIPSI, BADGE KATEGORI & FILTER TAB
-   ========================================================================== */
+/* Foto Menu, Deskripsi, Badge Kategori, Filter Tab */
 .category-tabs {
     display: flex;
     gap: 8px;

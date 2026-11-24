@@ -29,7 +29,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // 2. Update Jumlah Stok Menu
     document.querySelectorAll(".btn-simpan-stok").forEach(btn => {
         btn.addEventListener("click", async () => {
             const idMenu = btn.dataset.id;
@@ -60,7 +59,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // 3. Tutup Sesi / Shift (Hapus Seluruh Riwayat Pesanan)
     const btnTutupSesi = document.getElementById("btn-tutup-sesi");
     if (btnTutupSesi) {
         btnTutupSesi.addEventListener("click", async () => {

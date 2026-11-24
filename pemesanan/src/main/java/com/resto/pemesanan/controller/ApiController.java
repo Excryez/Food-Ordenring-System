@@ -73,7 +73,7 @@ public class ApiController {
         public List<ItemRequest> items;
     }
 
-    // 1. Simpan Pesanan Baru + Cek Status Buka + Metode Pembayaran + Catatan + Potong Stok
+    // Simpan Pesanan Baru, Cek Status Buka, Metode Pembayaran, Catatan, Potong Stok
     @PostMapping("/pesanan")
     public ResponseEntity buatPesanan(@RequestBody PesananRequest req) {
         if (!isTokoBuka()) {
@@ -138,7 +138,7 @@ public class ApiController {
         return ResponseEntity.ok(res);
     }
 
-    // 2. Update Status Pesanan di Kanban
+    // Update Status Pesanan di Kanban
     @PutMapping("/pesanan/{id}/status")
     public ResponseEntity updateStatusPesanan(@PathVariable Integer id,
                                               @RequestBody Map<String, String> body,
@@ -161,7 +161,7 @@ public class ApiController {
         ));
     }
 
-    // 3. Update Jumlah Stok Menu dari Dashboard Staf
+    // Update Jumlah Stok Menu dari Dashboard Staf
     @PutMapping("/menu/{id}/stok")
     public ResponseEntity updateStatusMenu(@PathVariable Integer id, @RequestBody Map<String, Integer> body) {
         Menu menu = menuRepository.findById(id)
@@ -179,7 +179,7 @@ public class ApiController {
         ));
     }
 
-    // 4. Ambil Daftar & Status Pesanan Terbaru Berdasarkan Kode Unik Meja (kode_qr)
+    // Ambil Daftar & Status Pesanan Terbaru Berdasarkan Kode Unik Meja (kode_qr)
     @GetMapping("/meja/{kodeQr}/pesanan")
     public ResponseEntity getPesananByMeja(@PathVariable String kodeQr) {
         Meja meja = mejaRepository.findAll().stream()
@@ -237,7 +237,7 @@ public class ApiController {
         return ResponseEntity.ok(response);
     }
 
-    // 5A. Buka Layanan Pemesanan
+    // Buka Layanan Pemesanan
     @RequestMapping(value = "/sesi/buka", method = {RequestMethod.POST, RequestMethod.GET})
     public ResponseEntity bukaSesi() {
         try {
@@ -255,7 +255,7 @@ public class ApiController {
         }
     }
 
-    // 5B. Tutup Layanan Pemesanan (Ditolak jika masih ada pesanan belum selesai)
+    // Tutup Layanan Pemesanan (Ditolak jika masih ada pesanan belum selesai)
     @RequestMapping(value = "/sesi/tutup", method = {RequestMethod.POST, RequestMethod.DELETE, RequestMethod.GET})
     public ResponseEntity tutupSesiShift() {
         try {

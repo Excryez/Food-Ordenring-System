@@ -8,7 +8,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const trackingSection = document.getElementById("tracking-section");
     const daftarStatusEl = document.getElementById("daftar-status-pesanan");
 
-    // Custom UI Modal Alert & Toast
     const uiAlertModal = document.getElementById("ui-alert-modal");
     const uiAlertIcon = document.getElementById("ui-alert-icon");
     const uiAlertTitle = document.getElementById("ui-alert-title");
@@ -67,7 +66,6 @@ document.addEventListener("DOMContentLoaded", () => {
         return kodeQr ? `nama_pelanggan_${kodeQr}` : "nama_pelanggan_umum";
     }
 
-    // Pulihkan nama pelanggan tersimpan saat halaman dibuka / reload
     function pulihkanNamaPelanggan(kodeQrOverride = "") {
         const savedNama = sessionStorage.getItem(getStorageKeyNama(kodeQrOverride))
             || sessionStorage.getItem("nama_pelanggan_umum")
@@ -105,7 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
         totalHargaEl.textContent = formatRupiah(totalHarga);
     }
 
-    // Kontrol tombol + dan -
+    // Kontrol tombol
     menuItems.forEach(item => {
         const btnMinus = item.querySelector(".btn-minus");
         const btnPlus = item.querySelector(".btn-plus");
@@ -138,7 +136,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // Filter Kategori Menu (Semua, Makanan, Camilan, Minuman)
+    // Filter Kategori Menu
     const filterButtons = document.querySelectorAll(".btn-filter-kat");
     filterButtons.forEach(btn => {
         btn.addEventListener("click", () => {
@@ -229,7 +227,6 @@ document.addEventListener("DOMContentLoaded", () => {
     muatStatusPesanan();
     setInterval(muatStatusPesanan, 5000);
 
-    // Langkah 1: Klik "Kirim Pesanan" -> Validasi via Custom UI Modal -> Buka Modal Konfirmasi
     btnPesan.addEventListener("click", () => {
         const idMeja = selectMeja.value;
         const namaPelanggan = inputNama.value.trim();

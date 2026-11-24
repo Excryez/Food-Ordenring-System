@@ -8,10 +8,10 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-<!-- CONTAINER TOAST NOTIFIKASI -->
+<!-- Container Toast Notification -->
 <div id="ui-toast-container" class="ui-toast-container"></div>
 
-<!-- CUSTOM UI MODAL KONFIRMASI & PERINGATAN STAF -->
+<!-- Kustom UI Konfirmasi & Peringatan Staf -->
 <div id="ui-staff-modal" class="ui-modal-overlay">
     <div class="ui-modal-box">
         <div id="ui-staff-icon" class="ui-modal-icon warning">!</div>
@@ -64,12 +64,12 @@
 </header>
 
 <main class="container main-content">
-    <!-- PAPAN KANBAN PESANAN -->
+    <!-- Papan Kanban Pesanan -->
     <section class="kanban-section">
         <h2>Antrean Pesanan Aktif</h2>
         <div class="kanban-board">
 
-            <!-- KOLOM 1: PESANAN BARU -->
+            <!-- Makanan Baru Dipesan -->
             <div id="kolom-baru" class="kanban-column card" style="background: #fefce8; border: 1px solid #fde047;">
                 <h3 style="margin-bottom: 12px; color: #854d0e;">Pesanan Baru</h3>
                 <div th:each="p : ${daftarPesanan}" th:if="${p.status == 'baru'}"
@@ -110,7 +110,7 @@
                 </div>
             </div>
 
-            <!-- KOLOM 2: SEDANG DIPROSES -->
+            <!-- Makanan Sedang Diproses -->
             <div id="kolom-diproses" class="kanban-column card" style="background: #eff6ff; border: 1px solid #93c5fd;">
                 <h3 style="margin-bottom: 12px; color: #1e40af;">Sedang Diproses</h3>
                 <div th:each="p : ${daftarPesanan}" th:if="${p.status == 'diproses'}"
@@ -151,7 +151,7 @@
                 </div>
             </div>
 
-            <!-- KOLOM 3: SELESAI -->
+            <!-- Makanan Selesai -->
             <div id="kolom-selesai" class="kanban-column card" style="background: #f0fdf4; border: 1px solid #86efac;">
                 <h3 style="margin-bottom: 12px; color: #166534;">Selesai / Siap Diantar</h3>
                 <div th:each="p : ${daftarPesanan}" th:if="${p.status == 'selesai'}"
@@ -189,7 +189,7 @@
         </div>
     </section>
 
-    <!-- KELOLA STOK MENU -->
+    <!-- Menu Kelola Stok -->
     <section class="stock-section card" style="margin-top: 24px;">
         <h2>Kelola Stok & Ketersediaan Menu</h2>
         <table class="stock-table">
