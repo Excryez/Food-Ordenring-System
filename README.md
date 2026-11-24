@@ -17,7 +17,9 @@ Aplikasi web pemesanan makanan dan minuman restoran berbasis *point-of-sale* (PO
 * **Frontend:** HTML5, CSS3 (*Mobile-First Responsive Design*, `@media print`), JavaScript (Vanilla JS, `qrcode.js` untuk generator QR)
 * **Build Tool:** Apache Maven (`pom.xml` / Maven Wrapper)
 
-* Link: https://fos.dxtstd.my.id/
+
+Link: https://fos.dxtstd.my.id/
+
 
 ## Cara Instalasi Lokal (Setup Guide)
 
